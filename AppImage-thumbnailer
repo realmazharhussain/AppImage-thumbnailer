@@ -1,7 +1,8 @@
 #!/bin/bash
 inFile="$(realpath "$1")"
-outFile="$(realpath "$2")"
+outFile="$(realpath -m "$2")"
 size="$3"
+tmpThumb=thumbnail.png
 
 tmpDir=/tmp/AppImage-thumnailer
 if ! mkdir -p $tmpDir; then
@@ -12,9 +13,10 @@ fi
 cd $tmpDir
 
 thumb="$("$inFile" --appimage-extract '.DirIcon')"
-while [ "$(file -bi "$thumb")" = 'inode/symlink' ]; do
+while file -bi "$thumb" | grep 'inode/symlink' &> /dev/null; do
   thumb="$(file "$thumb" | rev | cut -d " " -f 1 | rev)"
   thumb="$("$inFile" --appimage-extract "$thumb")"
 done
-convert  -background none -resize "$size" "$thumb" "$outFile"
+convert  -background none -resize "$size" "$thumb" "$tmpThumb" &> ~/appimageThumbnailer.log
+mv "$tmpThumb" "$outFile"
 rm -r $tmpDir
