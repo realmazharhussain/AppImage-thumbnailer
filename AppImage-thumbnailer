@@ -17,6 +17,6 @@ while file -bi "$thumb" | grep 'inode/symlink' &> /dev/null; do
   thumb="$(file "$thumb" | rev | cut -d " " -f 1 | rev)"
   thumb="$("$inFile" --appimage-extract "$thumb")"
 done
-convert  -background none -resize "$size" "$thumb" "$tmpThumb" &> ~/appimageThumbnailer.log
+convert  -background none -resize "$size" "$thumb" "$tmpThumb" 
 mv "$tmpThumb" "$outFile"
 rm -r $tmpDir
