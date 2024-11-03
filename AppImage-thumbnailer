@@ -4,19 +4,34 @@ outFile="$(realpath -m "$2")"
 size="$3"
 tmpThumb=thumbnail.png
 
-tmpDir=/tmp/AppImage-thumnailer
-if ! mkdir -p $tmpDir; then
-  echo "Cannot create temprary directory to work in!"
+tmpDir=/tmp/AppImage-thumbnailer
+if ! mkdir -p "$tmpDir"; then
+  echo "Cannot create temporary directory to work in!"
   echo "Quitting..."
   exit 1
 fi
-cd $tmpDir
+cd "$tmpDir" || exit 1
 
 thumb="$("$inFile" --appimage-extract '.DirIcon')"
 while file -bi "$thumb" | grep 'inode/symlink' &> /dev/null; do
   thumb="$(file "$thumb" | rev | cut -d " " -f 1 | rev)"
   thumb="$("$inFile" --appimage-extract "$thumb")"
 done
-convert  -background none -thumbnail "$size" "$thumb" "$tmpThumb" 
+
+cd squashfs-root || exit 1
+
+thumb="$(basename "$thumb")"
+
+if [ ! -f "$thumb" ]; then
+  cd .. && rm -r "$tmpDir"
+  exit 1
+fi
+
+if ! magick "$thumb" -background none -thumbnail "$size" "../$tmpThumb"; then
+  cd .. && rm -r "$tmpDir"
+  exit 1
+fi
+
+cd ..
 mv "$tmpThumb" "$outFile"
-rm -r $tmpDir
+rm -r "$tmpDir"
