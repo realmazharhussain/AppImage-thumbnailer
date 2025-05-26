@@ -1,3 +1,9 @@
+> [!WARNING]
+> This thumbnailer executes the AppImage to create a thumbnail for it, which might be unsecure, or at the very least, unreliable.
+> It won't generate a thumbnail for an AppImage unless it has been marked as executable.
+>
+> You might wanna use alternative thumbnailers e.g. [xapp-thumbnailers](https://github.com/linuxmint/xapp-thumbnailers) or [kem-a/appimage-thumbnailer](https://github.com/kem-a/appimage-thumbnailer).
+
 # AppImage-thumbnailer
 A thumbnailer for AppImages
 ## Dependencies:
